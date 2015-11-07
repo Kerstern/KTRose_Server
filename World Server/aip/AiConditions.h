@@ -1,6 +1,31 @@
+/*
+    Rose Online Server Emulator
+    Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+    depeloped with Main erose/hrose source server + some change from the original eich source
+*/
+
 // Props to ExJam for this code :D
-#define AICOND(cond) int F_AI_COND_ ## cond (class CWorldServer* server, class CCharacter* entity, byte* raw)
+//LMA: we add the AIPId so it's easier to do some patching and easier on logs as well.
+/*#define AICOND(cond) int F_AI_COND_ ## cond (class CWorldServer* server, class CCharacter* entity, byte* raw)
 typedef int (*fpAiCond)(class CWorldServer*, class CCharacter*, byte*);
+*/
+#define AICOND(cond) int F_AI_COND_ ## cond (class CWorldServer* server, class CCharacter* entity, byte* raw,int AipId)
+typedef int (*fpAiCond)(class CWorldServer*, class CCharacter*, byte*, int);
 #define GETAICONDDATA(cond) STR_AI_COND_ ## cond * data = (STR_AI_COND_ ## cond *)raw;
 
 AICOND(000);AICOND(001);AICOND(002);
@@ -13,9 +38,9 @@ AICOND(018);AICOND(019);AICOND(020);
 AICOND(021);AICOND(022);AICOND(023);
 AICOND(024);AICOND(025);AICOND(026);
 AICOND(027);AICOND(028);AICOND(029);
-AICOND(030);AICOND(031);AICOND(032);
+AICOND(030);AICOND(031);
 
-#define AI_COND_COUNT 33
+#define AI_COND_COUNT 32
 
 struct STR_AI_COND_000
 {
@@ -252,15 +277,10 @@ struct STR_AI_COND_029
 struct STR_AI_COND_030
 {
 	//Unknown (0x04 bytes)
-	dword Unknown;	//Pos: 0x00
+	//dword Unknown;	//Pos: 0x00
+	dword Timer;	//Pos: 0x00, LMA: timer.
 };
 
-struct STR_AI_COND_031
-{
-    //no data needed here
-};
-
-struct STR_AI_COND_032
-{
-    //no data needed here
+//LMA: Unknown and empty :)
+struct STR_AI_COND_031 {
 };

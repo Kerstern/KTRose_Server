@@ -1,3 +1,24 @@
+/*
+    Rose Online Server Emulator
+    Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
+
+    This program is free software; you can redistribute it and/or
+    modify it under the terms of the GNU General Public License
+    as published by the Free Software Foundation; either version 2
+    of the License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+    depeloped with Main erose/hrose source server + some change from the original eich source
+*/
+
 // Props to ExJam for this code :D
 #include "../WorldServer.h"
 
@@ -166,110 +187,6 @@ AICOND(002)
     	}
     }
 	return AI_FAILURE;
-
-	//count how many aiobj between nLevelDiff and nLevelDiff2 who is btIsAllied within iDistance
-	//must be >= wChrNum
-	//doesn't seem to work that way though
-	//it would seem that LevelDiff is a maximum level and LevelDiff2 is a minimum level.
-	//just subtract each from 65535 to get the level range. No difference involved at all. PY
-	//leveldiff2 often uses only the first byte so it is taken at face value.
-
-	//Log(MSG_DEBUG, "AICOND(002) called");
-	/*
-    GETAICONDDATA(002);
-    int maxlevel = 0;
-    int minlevel = 0;
-    CMonster* monster = reinterpret_cast<CMonster*>(entity);
-    //Log(MSG_INFO,"Minlevel: %i  Maxlevel: %i",data->nLevelDiff2,data->nLevelDiff);
-
-    if(data->nLevelDiff2 > 255)
-        minlevel = 65535 - data->nLevelDiff2;
-    else
-        minlevel = data->nLevelDiff2;
-    if(data->nLevelDiff > 255)
-        maxlevel = 65535 - data->nLevelDiff;
-    else
-        maxlevel = data->nLevelDiff;
-
-    if(minlevel > maxlevel) //Sometimes min and max are reversed. After all we just need to know if someting is between the two
-    {
-         int tmpmax = maxlevel;
-         int tmpmin = minlevel;
-         minlevel = tmpmax;
-         maxlevel = tmpmin;
-    }
-    //Log(MSG_INFO,"Minlevel: %i  Maxlevel: %i",minlevel,maxlevel);
-	UINT chrCount = 0;
-	UINT eCount = 0;
-	int nearestDistance = 9999999;
-	int searchDistance = data->iDistance;
-	CMap* map = GServer->MapList.Index[entity->Position->Map];
-    //Log(MSG_DEBUG, "COND(002) Check Near (1)iDistance %i btIsAllied %i level %i to %i wChrNum %i Monid %i", data->iDistance, data->btIsAllied, minlevel, maxlevel, data->wChrNum, monster->montype);
-    if(data->btIsAllied == 1)
-    {
-    	dword entityCount = map->MonsterList.size();
-        for(UINT j=0;j<map->MonsterList.size();j++)
-        {
-            CMonster* other = map->MonsterList.at(j);
-            if(eCount >= entityCount) break;
-            if(other == NULL) continue;
-            eCount++;
-            if(other == entity) continue;
-
-    		if(other->Stats->Level > maxlevel) continue;
-    		if(other->Stats->Level < minlevel) continue;
-            int iDistance = (int)GServer->distance( other->Position->current, entity->Position->current );
-    		if(iDistance > searchDistance) continue;
-
-    		chrCount++;
-    		if(iDistance < nearestDistance)
-            {
-    			nearestDistance = iDistance;
-    			entity->nearChar = other;
-    		}
-    		if(chrCount >= data->wChrNum)
-            {
-    			entity->findChar = other;
-    			return AI_SUCCESS;
-    		}
-    	}
-    }
-    else
-    {
-    	dword entityCount = map->PlayerList.size();
-        //Log(MSG_DEBUG, "entityCount %i", entityCount);
-        for(UINT j=0;j<map->PlayerList.size();j++)
-        {
-            CPlayer* other = map->PlayerList.at(j);
-            //Log(MSG_DEBUG, "player %i", other->clientid);
-            if(eCount >= entityCount) break;
-            //Log(MSG_INFO, "1");
-            if(other == NULL) continue;
-            //Log(MSG_INFO, "2");
-            eCount++;
-
-            if(other->Stats->Level > maxlevel) continue;
-    		if(other->Stats->Level < minlevel) continue;
-            int iDistance = (int)GServer->distance( other->Position->current, entity->Position->current );
-    		if(iDistance > searchDistance) continue;
-            //Log(MSG_INFO, "5");
-
-    		chrCount++;
-    		if(iDistance < nearestDistance)
-            {
-    			nearestDistance = iDistance;
-    			entity->nearChar = other;
-                //Log(MSG_INFO, "6");
-    		}
-    		if(chrCount >= data->wChrNum)
-            {
-                entity->findChar = other;
-                //Log(MSG_INFO, "7");
-    			return AI_SUCCESS;
-    		}
-    	}
-    }
-	return AI_FAILURE;*/
 }
 
 //Check Distance (1)
@@ -281,8 +198,8 @@ AICOND(003)
 	//Log(MSG_DEBUG, "AICOND(003) called");
     GETAICONDDATA(003);
 
-	entity->UpdatePosition();
-    int moveDistance = (int)GServer->distance( entity->Position->current, entity->Position->source );
+	entity->UpdatePosition(false);
+    int moveDistance = (int) GServer->distance( entity->Position->current, entity->Position->source );
 	if(moveDistance > (data->iDistance))
     {
 		return AI_SUCCESS;
@@ -306,9 +223,9 @@ AICOND(004)
         //Log(MSG_DEBUG, "AICOND(004) found no valid target");
         return AI_FAILURE;
     }
-	target->UpdatePosition();
-	entity->UpdatePosition();
-	int distance = (int)GServer->distance( entity->Position->current, target->Position->current );
+	target->UpdatePosition(false);
+	entity->UpdatePosition(false);
+	int distance = (int) GServer->distance( entity->Position->current, target->Position->current );
     //int distance = entity->basic.pos.distance(target->basic.pos);
 	if(data->cMoreLess == 0)
     {
@@ -770,8 +687,8 @@ AICOND(018)
     //CMonster* thisMonster = reinterpret_cast<CMonster*>(entity);
     //CWorldEntity* caller = thisMonster->thisZone->GetEntity(thisMonster->_CallerID);
     //if(caller == NULL) return AI_FAILURE;
-	caller->UpdatePosition();
-	thisMonster->UpdatePosition();
+	caller->UpdatePosition(false);
+	thisMonster->UpdatePosition(thisMonster->stay_still);
 	int distance = (int)GServer->distance( caller->Position->current, thisMonster->Position->current );
     //int distance = thisMonster->basic.pos.distance(caller->basic.pos);
     //Log(MSG_DEBUG, "AICOND(018 3)");
@@ -803,7 +720,7 @@ AICOND(020)
 	//byte btAbType;	//Pos: 0x00
 	//dword iValue;	    //Pos: 0x04
 	//byte btOp;	    //Pos: 0x08
-
+	
 
 	//cAbType
 	//0 = Level
@@ -920,13 +837,15 @@ AICOND(026)
 {
 	GETAICONDDATA(026);
 	//channel >= min && channel <= max
-	//return AI_SUCCESS;
-	return AI_FAILURE;
+
+	//LMA: Success for now ;)
+	return AI_SUCCESS;
+	//return AI_FAILURE;
 }
 
 //Check Near Character
-AICOND(027
-){
+AICOND(027)
+{
 	//dword iDistance;	//Pos: 0x00
 	//byte btIsAllied;	//Pos: 0x04
 	//word nLevelDiff;	//Pos: 0x06
@@ -1061,34 +980,9 @@ AICOND(030)
 
 //from here on this is 100% server sided. AIP scripts with these elements in should not be uploaded to the client
 
-// TDEF code. Check current position against Destination
+
+//LMA: Unknown and emtpy...
 AICOND(031)
 {
-    Log(MSG_DEBUG,"aicon 031 check if reached target");
-    GETAICONDDATA(031);
-    CMonster* ThisMonster = reinterpret_cast<CMonster*>(entity);
-    fPoint Current = ThisMonster->Position->current;
-    fPoint Destination = ThisMonster->Position->destiny;
-    if(ThisMonster->Position->current.x == ThisMonster->Position->destiny.x && ThisMonster->Position->current.y == ThisMonster->Position->destiny.y )
-    {
-
-        return AI_SUCCESS;
-    }
-    else
-        return AI_FAILURE;
-}
-
-// TDEF code. Check Waypoint
-AICOND(032)
-{
-    Log(MSG_DEBUG,"aicon 032 check waypoint type");
-    GETAICONDDATA(032);
-    CMonster* monster = reinterpret_cast<CMonster*>(entity);
-
-    if(GServer->WPList[monster->Position->Map][monster->NextWayPoint].WPType == 3) //next way point is at the final waypoint in the sequence
-    {
-        return AI_SUCCESS;
-    }
-    else
-        return AI_FAILURE;
+	return AI_SUCCESS;
 }

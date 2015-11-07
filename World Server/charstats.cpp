@@ -1,22 +1,22 @@
 /*
     Rose Online Server Emulator
-    Copyright (C) 2006,2007 OSRose Team http://www.osrose.net
-    
+    Copyright (C) 2006,2007 OSRose Team http://www.dev-osrose.com
+
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
     as published by the Free Software Foundation; either version 2
     of the License, or (at your option) any later version.
-    
+
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
-    
+
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
-    depeloped with Main erose/hrose source server + some change from the original eich source        
+    depeloped with Main erose/hrose source server + some change from the original eich source
 */
 #include "character.h"
 
@@ -28,12 +28,6 @@ unsigned int CCharacter::GetAttackPower( )
 
 // virtual [return defense]
 unsigned int CCharacter::GetDefense( )
-{
-    return 0;
-}
-
-// virtual [return dodge]
-unsigned int CCharacter::GetDodge( )
 {
     return 0;
 }
@@ -52,6 +46,12 @@ unsigned int CCharacter::GetItemDropRate( )
 
 // virtual [return item drop rate]
 unsigned int CCharacter::GetItemDropCountRate( )
+{
+    return 0;
+}
+
+// virtual [return dodge]
+unsigned int CCharacter::GetDodge( )
 {
     return 0;
 }
@@ -93,7 +93,8 @@ unsigned int CCharacter::GetMoveSpeed( )
 }
 
 // virtual [return maxhp]
-unsigned int CCharacter::GetMaxHP( )
+//unsigned int CCharacter::GetMaxHP( )
+unsigned long long CCharacter::GetMaxHP( )
 {
     return 0;
 }
